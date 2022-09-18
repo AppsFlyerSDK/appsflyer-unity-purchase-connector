@@ -1,0 +1,3 @@
+rootProject.name = "AppsFlyer unity purchase connector"
+include ':app'
+include ':AppsFlyerUnityPurchaseConnector'
