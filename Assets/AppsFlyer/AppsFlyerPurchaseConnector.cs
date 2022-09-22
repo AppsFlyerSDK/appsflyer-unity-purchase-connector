@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using System;
 
@@ -78,12 +79,13 @@ namespace AppsFlyerConnector
 #endif
         }
 
-        public static void setAutoLogPurchaseRevenue() {
+        public static void setAutoLogPurchaseRevenue(params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions) {
 
 #if UNITY_IOS && !UNITY_EDITOR
-                // delegate implementation
+                _setAutoLogPurchaseRevenue(autoLogPurchaseRevenueOptions.Length, autoLogPurchaseRevenueOptions);
 #endif                
         }
+
 
 #if UNITY_IOS && !UNITY_EDITOR
 
@@ -98,7 +100,7 @@ namespace AppsFlyerConnector
     [DllImport("__Internal")]
     private static extern void _setPurchaseRevenueDataSource();
     [DllImport("__Internal")]
-    private static extern void _setAutoLogPurchaseRevenue();
+    private static extern void _setAutoLogPurchaseRevenue(int length, params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions);
     [DllImport("__Internal")]
     private static extern void _build();
 
@@ -107,4 +109,12 @@ namespace AppsFlyerConnector
     public enum Store {
     GOOGLE
 }
+
+
+    public enum AppsFlyerAutoLogPurchaseRevenueOptions
+    {
+        AppsFlyerAutoLogPurchaseRevenueOptionsDisabled = 0,
+        AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1,
+        AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 2
+    }
 }

@@ -12,7 +12,7 @@ echo "moving the external dependency manager to root"
 mv external-dependency-manager-1.2.144.unitypackage ..
 
 # Build the .unitypackage
- /Applications/Unity/Hub/Editor/2020.3.15f2/Unity.app/Contents/MacOS/Unity \
+ /Applications/Unity/Hub/Editor/2019.4.26f1/Unity.app/Contents/MacOS/Unity \
 -gvh_disable \
 -batchmode \
 -importPackage external-dependency-manager-1.2.144.unitypackage \
