@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import com.appsflyer.api.InAppPurchaseEvent;
 import com.appsflyer.api.PurchaseClient;
 import com.appsflyer.api.Store;
@@ -31,150 +32,187 @@ public class AppsFlyerAndroidWrapper {
     private static final String INAPP_VALIDATION_CALLBACK = "onInAppValidation";
 
     private static PurchaseClient purchaseClientInstance;
+    private static PurchaseClient.Builder builder;
+
     private static String unityObjectName;
-    private static String unityCallbackResult;
+    // private static String unityCallbackResult;
 
-    public static void build(Store store, String objectName, boolean isSandbox, boolean logSubscriptions, boolean autoLogInApps, boolean enableSubscriptionPurchaseEventDataSource, boolean enableInAppPurchaseEventDataSource, boolean enableSubValidationCallback, boolean enableInAppValidationCallback) {
-        unityObjectName = objectName;
-        purchaseClientInstance = new PurchaseClient.Builder(UnityPlayer.currentActivity, store)
-                .logSubscriptions(logSubscriptions)
-                .autoLogInApps(autoLogInApps)
-                .setSandbox(isSandbox)
-                .setSubscriptionPurchaseEventDataSource(new PurchaseClient.SubscriptionPurchaseEventDataSource() {
-                    @NotNull
-                    @Override
-                    public Map<String, Object> onNewPurchases(@NotNull List<? extends SubscriptionPurchaseEvent> purchaseEvents) {
-                        Map<String, Object> map = new HashMap<>();
-                        if (enableSubscriptionPurchaseEventDataSource && unityObjectName != null) {
-                            JSONArray jsonArray = new JSONArray(purchaseEvents);
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("list", jsonArray);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+    public static void build() {
+        if (builder != null) {
+            purchaseClientInstance = builder.build();
+        } else {
+            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Initialization is required prior to building.");
+        }
+        
+                // .setSubscriptionPurchaseEventDataSource(new PurchaseClient.SubscriptionPurchaseEventDataSource() {
+                //     @NotNull
+                //     @Override
+                //     public Map<String, Object> onNewPurchases(@NotNull List<? extends SubscriptionPurchaseEvent> purchaseEvents) {
+                //         Map<String, Object> map = new HashMap<>();
+                //         if (enableSubscriptionPurchaseEventDataSource && unityObjectName != null) {
+                //             JSONArray jsonArray = new JSONArray(purchaseEvents);
+                //             JSONObject jsonObject = new JSONObject();
+                //             try {
+                //                 jsonObject.put("list", jsonArray);
+                //             } catch (JSONException e) {
+                //                 e.printStackTrace();
+                //             }
 
-                            String str = unitySendMessageExtended(unityObjectName, SUBSCRIPTION_DATA_CALLBACK, jsonObject.toString());
-                            Log.d("AppsFlyer-PurchaseConnector-Unity", str);
+                //             String str = unitySendMessageExtended(unityObjectName, SUBSCRIPTION_DATA_CALLBACK, jsonObject.toString());
+                //             Log.d("AppsFlyer-PurchaseConnector-Unity", str);
 
-                            String[] pairs = str.split(",");
-                            for (String pair : pairs) {
-                                String[] keyValue = pair.split(":");
-                                map.put(keyValue[0], Integer.valueOf(keyValue[1]));
-                            }
-                        }
-                        return map;
-                    }
-                })
-                .setInAppPurchaseEventDataSource(new PurchaseClient.InAppPurchaseEventDataSource() {
-                    @NotNull
-                    @Override
-                    public Map<String, Object> onNewPurchases(@NotNull List<? extends InAppPurchaseEvent> purchaseEvents) {
-                        Map<String, Object> map = new HashMap<>();
-                        if (enableInAppPurchaseEventDataSource && unityObjectName != null) {
-                            JSONArray jsonArray = new JSONArray(purchaseEvents);
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("list", jsonArray);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                //             String[] pairs = str.split(",");
+                //             for (String pair : pairs) {
+                //                 String[] keyValue = pair.split(":");
+                //                 map.put(keyValue[0], Integer.valueOf(keyValue[1]));
+                //             }
+                //         }
+                //         return map;
+                //     }
+                // })
+                // .setInAppPurchaseEventDataSource(new PurchaseClient.InAppPurchaseEventDataSource() {
+                //     @NotNull
+                //     @Override
+                //     public Map<String, Object> onNewPurchases(@NotNull List<? extends InAppPurchaseEvent> purchaseEvents) {
+                //         Map<String, Object> map = new HashMap<>();
+                //         if (enableInAppPurchaseEventDataSource && unityObjectName != null) {
+                //             JSONArray jsonArray = new JSONArray(purchaseEvents);
+                //             JSONObject jsonObject = new JSONObject();
+                //             try {
+                //                 jsonObject.put("list", jsonArray);
+                //             } catch (JSONException e) {
+                //                 e.printStackTrace();
+                //             }
 
-                            String str = unitySendMessageExtended(unityObjectName, INAPP_DATA_CALLBACK, jsonObject.toString());
-                            Log.d("AppsFlyer-PurchaseConnector-Unity", str);
+                //             String str = unitySendMessageExtended(unityObjectName, INAPP_DATA_CALLBACK, jsonObject.toString());
+                //             Log.d("AppsFlyer-PurchaseConnector-Unity", str);
 
-                            String[] pairs = str.split(",");
-                            for (String pair : pairs) {
-                                String[] keyValue = pair.split(":");
-                                map.put(keyValue[0], Integer.valueOf(keyValue[1]));
-                            }
-                        }
-                        return map;
-                    }
-                })
-                .setSubscriptionValidationResultListener(new PurchaseClient.SubscriptionPurchaseValidationResultListener() {
-                    @Override
-                    public void onResponse(@Nullable Map<String, ? extends SubscriptionValidationResult> result) {
-                        if (enableSubValidationCallback && unityObjectName != null) {
-                            JSONObject jsonObject = new JSONObject(result);
-                            UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull String result, @Nullable Throwable error) {
-                        if (enableSubValidationCallback && unityObjectName != null) {
-                            Map<String,Object> map = new HashMap<>();
-                            map.put("result", result);
-                            map.put("errorDescription", error);
-                            JSONObject jsonObject = new JSONObject(map);
-                            UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
-                        }
-                    }
-                })
-                .setInAppValidationResultListener(new PurchaseClient.InAppPurchaseValidationResultListener() {
-                    @Override
-                    public void onResponse(@Nullable Map<String, ? extends InAppPurchaseValidationResult> result) {
-                        if (enableInAppValidationCallback && unityObjectName != null) {
-                            JSONObject jsonObject = new JSONObject(result);
-                            UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull String result, @Nullable Throwable error) {
-                        if (enableInAppValidationCallback && unityObjectName != null) {
-                            Map<String,Object> map = new HashMap<>();
-                            map.put("result", result);
-                            map.put("errorDescription", error);
-                            JSONObject jsonObject = new JSONObject(map);
-                            UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
-                        }
-                    }
-                })
-                .build();
+                //             String[] pairs = str.split(",");
+                //             for (String pair : pairs) {
+                //                 String[] keyValue = pair.split(":");
+                //                 map.put(keyValue[0], Integer.valueOf(keyValue[1]));
+                //             }
+                //         }
+                //         return map;
+                //     }
+                // })
     }
 
-    // public static void setIsSandbox() {
+    public static void init(String objectName, int store) {
+        unityObjectName = objectName;
+        Store s = mappingEnum(store);
+        if (s != null) {
+            builder = new PurchaseClient.Builder(UnityPlayer.currentActivity, s);
+        } else {
+            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Please choose a valid store.");
+        }
+    }
 
-    // }
+    public static void setIsSandbox(boolean isSandbox) {
+        if (builder != null) {
+            builder.setSandbox(isSandbox);
+        }
+    }
 
-    // public static void setAutoLogSubscriptions() {
+    public static void setAutoLogSubscriptions(boolean logSubscriptions) {
+        if (builder != null) {
+            builder.logSubscriptions(logSubscriptions);
+        }
+    }
 
-    // }
+    public static void setAutoLogInApps(boolean autoLogInApps) {
+        if (builder != null) {
+            builder.autoLogInApps(autoLogInApps);
+        }
+    }
 
-    // public static void setAutoLogInApps() {
+    public static void setPurchaseRevenueValidationListeners(boolean enableCallbacks) {
+        if (builder != null && enableCallbacks) {
+            builder.setSubscriptionValidationResultListener(new PurchaseClient.SubscriptionPurchaseValidationResultListener() {
+                @Override
+                public void onResponse(@Nullable Map<String, ? extends SubscriptionValidationResult> result) {
+                    if (unityObjectName != null) {
+                        JSONObject jsonObject = new JSONObject(result);
+                        UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
+                    }
+                }
+    
+                @Override
+                public void onFailure(@NonNull String result, @Nullable Throwable error) {
+                    if (unityObjectName != null) {
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("result", result);
+                        map.put("errorDescription", error);
+                        JSONObject jsonObject = new JSONObject(map);
+                        UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
+                    }
+                }
+            });
+    
+            builder.setInAppValidationResultListener(new PurchaseClient.InAppPurchaseValidationResultListener() {
+                @Override
+                public void onResponse(@Nullable Map<String, ? extends InAppPurchaseValidationResult> result) {
+                    if (unityObjectName != null) {
+                        JSONObject jsonObject = new JSONObject(result);
+                        UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
+                    }
+                }
+    
+                @Override
+                public void onFailure(@NonNull String result, @Nullable Throwable error) {
+                    if (unityObjectName != null) {
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("result", result);
+                        map.put("errorDescription", error);
+                        JSONObject jsonObject = new JSONObject(map);
+                        UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
+                    }
+                }
+            });
+        }
+    }
 
-    // }
-
-    // public static void setSubscriptionPurchaseEventDataSource() {
-        
-    // }
-
-    // public static void setInAppPurchaseEventDataSource() {
-        
-    // }
-
+    
     public static void startObservingTransactions() {
-        purchaseClientInstance.startObservingTransactions();
+        if (purchaseClientInstance != null) {
+            purchaseClientInstance.startObservingTransactions();
+        } else {
+            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: startObservingTransactions was not called because the purchase client instance is null, please call build() prior to this function.");
+        }
     }
 
     public static void stopObservingTransactions() {
-        purchaseClientInstance.stopObservingTransactions();
+        if (purchaseClientInstance != null) {
+            purchaseClientInstance.stopObservingTransactions();
+        } else {
+            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: stopObservingTransactions was not called because the purchase client instance is null, please call build() prior to this function.");
+        }
     }
 
-    public static void setUnityObjectName(String objectName) {
-        unityObjectName = objectName;
-    }
+    // public static void setUnityObjectName(String objectName) {
+    //     unityObjectName = objectName;
+    // }
 
-    public static String unitySendMessageExtended(String gameObject, String functionName, String funcParam) {
-        UnityPlayer.UnitySendMessage(gameObject, functionName, funcParam);
-        String result = unityCallbackResult;
-        return result;
-    }
+//     public static String unitySendMessageExtended(String gameObject, String functionName, String funcParam) {
+//         UnityPlayer.UnitySendMessage(gameObject, functionName, funcParam);
+//         String result = unityCallbackResult;
+//         return result;
+//     }
 
-    public static void receiveResult(String str) {
-//        unityCallbackResult = "";
-        unityCallbackResult = str;
+//     public static void receiveResult(String str) {
+// //        unityCallbackResult = "";
+//         unityCallbackResult = str;
+//     }
+
+    private static Store mappingEnum(int storeEnum) {
+        Store s;
+        switch(storeEnum) {
+            case 0:
+                s = Store.GOOGLE;
+                break;
+            default:
+               return null;
+        }
+        return s;
     }
 }
