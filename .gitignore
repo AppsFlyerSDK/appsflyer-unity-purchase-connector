@@ -2,3 +2,7 @@
 .vscode/settings.json
 
 Library/
+
+.DS_Store
+
+.idea/
