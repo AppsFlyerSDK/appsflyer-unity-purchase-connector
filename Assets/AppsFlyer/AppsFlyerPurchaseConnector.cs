@@ -67,14 +67,14 @@ namespace AppsFlyerConnector
 #endif
         }
 
-        public static void setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions[] options) {
+        public static void setAutoLogPurchaseRevenue(params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions) {
 #if UNITY_IOS && !UNITY_EDITOR
-                _setAutoLogPurchaseRevenue(options);
+                _setAutoLogPurchaseRevenue(autoLogPurchaseRevenueOptions.Length, autoLogPurchaseRevenueOptions);
 #elif UNITY_ANDROID && !UNITY_EDITOR
-                if (options.Length == 0) {
+                if (autoLogPurchaseRevenueOptions.Length == 0) {
                         return;
                 }
-                foreach (AppsFlyerAutoLogPurchaseRevenueOptions op in options) {
+                foreach (AppsFlyerAutoLogPurchaseRevenueOptions op in autoLogPurchaseRevenueOptions) {
                         switch(op) {
                                 case AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsDisabled:
                                         break;
@@ -104,13 +104,6 @@ namespace AppsFlyerConnector
 #if UNITY_IOS && !UNITY_EDITOR
                 // delegate implementation
 #endif
-        }
-
-        public static void setAutoLogPurchaseRevenue(params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions) {
-
-#if UNITY_IOS && !UNITY_EDITOR
-                _setAutoLogPurchaseRevenue(autoLogPurchaseRevenueOptions.Length, autoLogPurchaseRevenueOptions);
-#endif                
         }
 
         private static int mapStoreToInt(Store s) {
@@ -150,13 +143,5 @@ namespace AppsFlyerConnector
         AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1,
         AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 2
     }
-}
 
-
-    public enum AppsFlyerAutoLogPurchaseRevenueOptions
-    {
-        AppsFlyerAutoLogPurchaseRevenueOptionsDisabled = 0,
-        AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1,
-        AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 2
-    }
 }

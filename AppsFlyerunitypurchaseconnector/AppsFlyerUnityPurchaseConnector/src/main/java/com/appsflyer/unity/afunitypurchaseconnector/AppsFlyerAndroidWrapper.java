@@ -25,11 +25,7 @@ import java.util.Map;
 
 public class AppsFlyerAndroidWrapper {
 
-    private static final String SUBSCRIPTION_DATA_CALLBACK = "onSubscriptionPurchaseEventDataSourceSet";
-    private static final String INAPP_DATA_CALLBACK = "onInAppPurchaseEventDataSourceSet";
-
-    private static final String SUBSCRIPTION_VALIDATION_CALLBACK = "onSubscriptionValidation";
-    private static final String INAPP_VALIDATION_CALLBACK = "onInAppValidation";
+    private static final String VALIDATION_CALLBACK = "didReceivePurchaseRevenueValidationInfo";
 
     private static PurchaseClient purchaseClientInstance;
     private static PurchaseClient.Builder builder;
@@ -43,59 +39,6 @@ public class AppsFlyerAndroidWrapper {
         } else {
             Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Initialization is required prior to building.");
         }
-        
-                // .setSubscriptionPurchaseEventDataSource(new PurchaseClient.SubscriptionPurchaseEventDataSource() {
-                //     @NotNull
-                //     @Override
-                //     public Map<String, Object> onNewPurchases(@NotNull List<? extends SubscriptionPurchaseEvent> purchaseEvents) {
-                //         Map<String, Object> map = new HashMap<>();
-                //         if (enableSubscriptionPurchaseEventDataSource && unityObjectName != null) {
-                //             JSONArray jsonArray = new JSONArray(purchaseEvents);
-                //             JSONObject jsonObject = new JSONObject();
-                //             try {
-                //                 jsonObject.put("list", jsonArray);
-                //             } catch (JSONException e) {
-                //                 e.printStackTrace();
-                //             }
-
-                //             String str = unitySendMessageExtended(unityObjectName, SUBSCRIPTION_DATA_CALLBACK, jsonObject.toString());
-                //             Log.d("AppsFlyer-PurchaseConnector-Unity", str);
-
-                //             String[] pairs = str.split(",");
-                //             for (String pair : pairs) {
-                //                 String[] keyValue = pair.split(":");
-                //                 map.put(keyValue[0], Integer.valueOf(keyValue[1]));
-                //             }
-                //         }
-                //         return map;
-                //     }
-                // })
-                // .setInAppPurchaseEventDataSource(new PurchaseClient.InAppPurchaseEventDataSource() {
-                //     @NotNull
-                //     @Override
-                //     public Map<String, Object> onNewPurchases(@NotNull List<? extends InAppPurchaseEvent> purchaseEvents) {
-                //         Map<String, Object> map = new HashMap<>();
-                //         if (enableInAppPurchaseEventDataSource && unityObjectName != null) {
-                //             JSONArray jsonArray = new JSONArray(purchaseEvents);
-                //             JSONObject jsonObject = new JSONObject();
-                //             try {
-                //                 jsonObject.put("list", jsonArray);
-                //             } catch (JSONException e) {
-                //                 e.printStackTrace();
-                //             }
-
-                //             String str = unitySendMessageExtended(unityObjectName, INAPP_DATA_CALLBACK, jsonObject.toString());
-                //             Log.d("AppsFlyer-PurchaseConnector-Unity", str);
-
-                //             String[] pairs = str.split(",");
-                //             for (String pair : pairs) {
-                //                 String[] keyValue = pair.split(":");
-                //                 map.put(keyValue[0], Integer.valueOf(keyValue[1]));
-                //             }
-                //         }
-                //         return map;
-                //     }
-                // })
     }
 
     public static void init(String objectName, int store) {
@@ -123,7 +66,7 @@ public class AppsFlyerAndroidWrapper {
     public static void setAutoLogInApps(boolean autoLogInApps) {
         if (builder != null) {
             builder.autoLogInApps(autoLogInApps);
-        }
+         }
     }
 
     public static void setPurchaseRevenueValidationListeners(boolean enableCallbacks) {
@@ -132,8 +75,12 @@ public class AppsFlyerAndroidWrapper {
                 @Override
                 public void onResponse(@Nullable Map<String, ? extends SubscriptionValidationResult> result) {
                     if (unityObjectName != null) {
-                        JSONObject jsonObject = new JSONObject(result);
-                        UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
+                        Map<String,String> map = new HashMap<>();
+                        for (Map.Entry<String, ? extends SubscriptionValidationResult> entry : result.entrySet()) {
+                            map.put(entry.getKey(), entry.getValue().toString());
+                        }
+                        JSONObject jsonObject = new JSONObject(map);
+                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
                     }
                 }
     
@@ -142,9 +89,9 @@ public class AppsFlyerAndroidWrapper {
                     if (unityObjectName != null) {
                         Map<String,Object> map = new HashMap<>();
                         map.put("result", result);
-                        map.put("errorDescription", error);
+                        map.put("errorDescription", error.toString());
                         JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, SUBSCRIPTION_VALIDATION_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
                     }
                 }
             });
@@ -153,8 +100,12 @@ public class AppsFlyerAndroidWrapper {
                 @Override
                 public void onResponse(@Nullable Map<String, ? extends InAppPurchaseValidationResult> result) {
                     if (unityObjectName != null) {
-                        JSONObject jsonObject = new JSONObject(result);
-                        UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
+                        Map<String,String> map = new HashMap<>();
+                        for (Map.Entry<String, ? extends InAppPurchaseValidationResult> entry : result.entrySet()) {
+                            map.put(entry.getKey(), entry.getValue().toString());
+                        }
+                        JSONObject jsonObject = new JSONObject(map);
+                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
                     }
                 }
     
@@ -163,9 +114,9 @@ public class AppsFlyerAndroidWrapper {
                     if (unityObjectName != null) {
                         Map<String,Object> map = new HashMap<>();
                         map.put("result", result);
-                        map.put("errorDescription", error);
+                        map.put("errorDescription", error.toString());
                         JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, INAPP_VALIDATION_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
                     }
                 }
             });

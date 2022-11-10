@@ -1,12 +1,10 @@
-plugins {
-    id 'com.android.library'
-}
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 32
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 32
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -19,16 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.4.0'
-    compileOnly 'com.appsflyer:purchase-connector:0.2.0'
-    compileOnly 'com.android.billingclient:billing:3.0.3'
+    compileOnly 'com.appsflyer:purchase-connector:1.0.0'
+    compileOnly 'com.android.billingclient:billing:4.1.0'
     testImplementation 'junit:junit:4.12'
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
