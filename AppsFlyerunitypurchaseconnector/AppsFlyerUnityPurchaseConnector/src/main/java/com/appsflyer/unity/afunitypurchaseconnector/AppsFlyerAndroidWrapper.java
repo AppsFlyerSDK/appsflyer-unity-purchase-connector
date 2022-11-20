@@ -26,6 +26,7 @@ import java.util.Map;
 public class AppsFlyerAndroidWrapper {
 
     private static final String VALIDATION_CALLBACK = "didReceivePurchaseRevenueValidationInfo";
+    private static final String ERROR_CALLBACK = "didReceivePurchaseRevenueError";
 
     private static PurchaseClient purchaseClientInstance;
     private static PurchaseClient.Builder builder;
@@ -91,7 +92,7 @@ public class AppsFlyerAndroidWrapper {
                         map.put("result", result);
                         map.put("errorDescription", error.toString());
                         JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, jsonObject.toString());
                     }
                 }
             });
@@ -116,7 +117,7 @@ public class AppsFlyerAndroidWrapper {
                         map.put("result", result);
                         map.put("errorDescription", error.toString());
                         JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, VALIDATION_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, jsonObject.toString());
                     }
                 }
             });
