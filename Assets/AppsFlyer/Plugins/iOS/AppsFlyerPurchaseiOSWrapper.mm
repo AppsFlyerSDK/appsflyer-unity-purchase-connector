@@ -27,34 +27,28 @@ extern "C" {
         [[PurchaseConnector shared] setPurchaseRevenueDelegate:_AppsFlyerPurchasedelegate];
     }
 
-    const void _setPurchaseRevenueDataSource() {
+    const void _setAutoLogPurchaseRevenue(int option) {
+           [[PurchaseConnector shared] setAutoLogPurchaseRevenue:option];
+
+    }
+
+    const void _init(const char* objectName) {
         if (_AppsFlyerPurchasedelegate == nil) {
             _AppsFlyerPurchasedelegate = [[AppsFlyerPurchaseiOSWrapper alloc] init];
-               }
-        [[PurchaseConnector shared] setPurchaseRevenueDataSource:_AppsFlyerPurchasedelegate];
-    }
-
-    const void _setAutoLogPurchaseRevenue() {
-//            [[PurchaseConnector shared] setAutoLogPurchaseRevenue:AFSDKAutoLogPurchaseRevenueOptionsRenewable];
-
-    }
-
-    const void _build() {
-        
+        }
+        onPurchaseValidationObjectName = stringFromChar(objectName);
     }
 }
 
 @implementation AppsFlyerPurchaseiOSWrapper
 
 - (void)didReceivePurchaseRevenueValidationInfo:(NSDictionary *)validationInfo error:(NSError *)error {
-    NSLog(@"Validation info: %@", validationInfo);
-    NSLog(@"Error: %@", error);
-//    unityCallBack()
-    // Process validation info
+    if (error != nil) {
+        unityCallBack(onPurchaseValidationObjectName, PURCHASE_REVENUE_ERROR_CALLBACK, [[error localizedDescription] UTF8String]);
+    } else {
+        unityCallBack(onPurchaseValidationObjectName, PURCHASE_REVENUE_VALIDATION_CALLBACK, stringFromdictionary(validationInfo));
+    }
 }
 
-- (NSDictionary *)purchaseRevenueAdditionalParametersForProducts:(NSSet<SKProduct *> *)products transactions:(NSSet<SKPaymentTransaction *> *)transactions {
-    return @{@"key1" : @"param1"};
-}
 
 @end

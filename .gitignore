@@ -1,8 +1,8 @@
 
 .vscode/settings.json
 
-Library/
-
-.DS_Store
-
 .idea/
+
+appsflyer-unity-purchase-connector.sln
+
+Assembly-CSharp.csproj

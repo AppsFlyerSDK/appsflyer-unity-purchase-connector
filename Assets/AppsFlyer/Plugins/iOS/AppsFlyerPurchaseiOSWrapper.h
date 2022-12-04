@@ -2,6 +2,7 @@
 //  Unity-iPhone
 
 
+#import "AFUnityUtils.mm"
 #import "UnityAppController.h"
 #if __has_include(<PurchaseConnector/PurchaseConnector.h>)
 #import  <PurchaseConnector/PurchaseConnector.h>
@@ -11,9 +12,12 @@
 
 
 
-@interface AppsFlyerPurchaseiOSWrapper : NSObject <AppsFlyerPurchaseRevenueDelegate, AppsFlyerPurchaseRevenueDataSource>
+@interface AppsFlyerPurchaseiOSWrapper : NSObject <AppsFlyerPurchaseRevenueDelegate>
 @end
 
 static AppsFlyerPurchaseiOSWrapper *_AppsFlyerPurchasedelegate;
 
 static const char* PURCHASE_REVENUE_VALIDATION_CALLBACK = "didReceivePurchaseRevenueValidationInfo";
+static const char* PURCHASE_REVENUE_ERROR_CALLBACK = "didReceivePurchaseRevenueError";
+
+static NSString* onPurchaseValidationObjectName = @"";

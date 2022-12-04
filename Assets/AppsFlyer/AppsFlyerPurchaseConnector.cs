@@ -8,7 +8,7 @@ namespace AppsFlyerConnector
     
     public class AppsFlyerPurchaseConnector : MonoBehaviour {
 
-        public static readonly string kAppsFlyerPurchaseConnectorVersion = "6.8.3.5";
+        public static readonly string kAppsFlyerPurchaseConnectorVersion = "1.0.0";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         private static AndroidJavaClass appsFlyerAndroidConnector = new AndroidJavaClass("com.appsflyer.unity.afunitypurchaseconnector.AppsFlyerAndroidWrapper");
@@ -16,7 +16,7 @@ namespace AppsFlyerConnector
 
         public static void build() {
 #if UNITY_IOS && !UNITY_EDITOR
-        _build();
+        //not for iOS
 #elif UNITY_ANDROID && !UNITY_EDITOR
                 appsFlyerAndroidConnector.CallStatic("build");
 
@@ -25,10 +25,11 @@ namespace AppsFlyerConnector
         }
 
         public static void init(MonoBehaviour unityObject, Store s) {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
+                _init(unityObject.name);
+#elif UNITY_ANDROID && !UNITY_EDITOR
                 int store = mapStoreToInt(s);
                 appsFlyerAndroidConnector.CallStatic("init", unityObject ? unityObject.name : null, store);
-#else
 #endif
         }
         public static void startObservingTransactions() {
@@ -60,7 +61,7 @@ namespace AppsFlyerConnector
 
         public static void setPurchaseRevenueValidationListeners(bool enableCallbacks) {
 #if UNITY_IOS && !UNITY_EDITOR
-                //ios
+                _setPurchaseRevenueDelegate();
 #elif UNITY_ANDROID && !UNITY_EDITOR
                 appsFlyerAndroidConnector.CallStatic("setPurchaseRevenueValidationListeners", enableCallbacks);
 #else
@@ -69,7 +70,11 @@ namespace AppsFlyerConnector
 
         public static void setAutoLogPurchaseRevenue(params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions) {
 #if UNITY_IOS && !UNITY_EDITOR
-                _setAutoLogPurchaseRevenue(autoLogPurchaseRevenueOptions.Length, autoLogPurchaseRevenueOptions);
+                int option = 0;
+                foreach (AppsFlyerAutoLogPurchaseRevenueOptions op in autoLogPurchaseRevenueOptions) {
+                        option = option | (int)op;
+                }
+                _setAutoLogPurchaseRevenue(option);
 #elif UNITY_ANDROID && !UNITY_EDITOR
                 if (autoLogPurchaseRevenueOptions.Length == 0) {
                         return;
@@ -126,11 +131,9 @@ namespace AppsFlyerConnector
     [DllImport("__Internal")]
     private static extern void _setPurchaseRevenueDelegate();
     [DllImport("__Internal")]
-    private static extern void _setPurchaseRevenueDataSource();
+    private static extern void _setAutoLogPurchaseRevenue(int option);
     [DllImport("__Internal")]
-    private static extern void _setAutoLogPurchaseRevenue(int length, params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions);
-    [DllImport("__Internal")]
-    private static extern void _build();
+    private static extern void _init(string objectName);
 
 #endif
     }
@@ -140,8 +143,8 @@ namespace AppsFlyerConnector
     public enum AppsFlyerAutoLogPurchaseRevenueOptions
     {
         AppsFlyerAutoLogPurchaseRevenueOptionsDisabled = 0,
-        AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1,
-        AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 2
+        AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1 << 0,
+        AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 1 << 1
     }
 
 }
