@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using System;
 
@@ -7,59 +8,91 @@ namespace AppsFlyerConnector
     
     public class AppsFlyerPurchaseConnector : MonoBehaviour {
 
-        public static readonly string kAppsFlyerPurchaseConnectorVersion = "6.8.3";
+        public static readonly string kAppsFlyerPurchaseConnectorVersion = "1.0.0";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        private static AndroidJavaClass appsFlyerAndroidARS = new AndroidJavaClass("com.appsflyer.unity.afunitypurchaseconnector.AppsFlyerAndroidWrapper");
+        private static AndroidJavaClass appsFlyerAndroidConnector = new AndroidJavaClass("com.appsflyer.unity.afunitypurchaseconnector.AppsFlyerAndroidWrapper");
 #endif
 
-        public void build(AppsFlyerPurchaseClient client, MonoBehaviour unityObject) {
+        public static void build() {
 #if UNITY_IOS && !UNITY_EDITOR
-        _build();
-
+        //not for iOS
 #elif UNITY_ANDROID && !UNITY_EDITOR
-
-        // using(AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
-        //     using(AndroidJavaObject cls_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity")) {
-        //         AndroidJavaObject cls_Application = cls_Activity.Call<AndroidJavaObject>("getApplication");
-        //         appsFlyerAndroidARS.CallStatic("build", cls_Application);
-        //     }
-        // }
-
-        appsFlyerAndroidARS.CallStatic("build", client.storeType, unityObject ? unityObject.name : null, client.isSandbox, client.logSubscriptions, client.autoLogInApps, client.subscriptionExtraParameters, client.inAppExtraParameters, client.listenSubscriptionValidation, client.listenInAppValidation);
+                appsFlyerAndroidConnector.CallStatic("build");
 
 #else
-
 #endif
         }
 
-
+        public static void init(MonoBehaviour unityObject, Store s) {
+#if UNITY_IOS && !UNITY_EDITOR
+                _init(unityObject.name);
+#elif UNITY_ANDROID && !UNITY_EDITOR
+                int store = mapStoreToInt(s);
+                appsFlyerAndroidConnector.CallStatic("init", unityObject ? unityObject.name : null, store);
+#endif
+        }
         public static void startObservingTransactions() {
-
 #if UNITY_IOS && !UNITY_EDITOR
                 _startObservingTransactions();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-                appsFlyerAndroidARS.CallStatic("startObservingTransactions");
+                appsFlyerAndroidConnector.CallStatic("startObservingTransactions");
 #else 
 #endif
         }
 
         public static void stopObservingTransactions() {
-
 #if UNITY_IOS && !UNITY_EDITOR
                 _stopObservingTransactions();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-                appsFlyerAndroidARS.CallStatic("stopObservingTransactions");
+                appsFlyerAndroidConnector.CallStatic("stopObservingTransactions");
 #else
 #endif
         }
 
-        public static void setIsSandBox(bool isSandbox) {
-
+        public static void setIsSandbox(bool isSandbox) {
 #if UNITY_IOS && !UNITY_EDITOR
                 _setIsSandbox(isSandbox);
 #elif UNITY_ANDROID && !UNITY_EDITOR
-                appsFlyerAndroidARS.CallStatic("setSandbox", isSandbox);
+                appsFlyerAndroidConnector.CallStatic("setIsSandbox", isSandbox);
+#else
+#endif
+        }
+
+        public static void setPurchaseRevenueValidationListeners(bool enableCallbacks) {
+#if UNITY_IOS && !UNITY_EDITOR
+                _setPurchaseRevenueDelegate();
+#elif UNITY_ANDROID && !UNITY_EDITOR
+                appsFlyerAndroidConnector.CallStatic("setPurchaseRevenueValidationListeners", enableCallbacks);
+#else
+#endif
+        }
+
+        public static void setAutoLogPurchaseRevenue(params AppsFlyerAutoLogPurchaseRevenueOptions[] autoLogPurchaseRevenueOptions) {
+#if UNITY_IOS && !UNITY_EDITOR
+                int option = 0;
+                foreach (AppsFlyerAutoLogPurchaseRevenueOptions op in autoLogPurchaseRevenueOptions) {
+                        option = option | (int)op;
+                }
+                _setAutoLogPurchaseRevenue(option);
+#elif UNITY_ANDROID && !UNITY_EDITOR
+                if (autoLogPurchaseRevenueOptions.Length == 0) {
+                        return;
+                }
+                foreach (AppsFlyerAutoLogPurchaseRevenueOptions op in autoLogPurchaseRevenueOptions) {
+                        switch(op) {
+                                case AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsDisabled:
+                                        break;
+                                case AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions:
+                                        appsFlyerAndroidConnector.CallStatic("setAutoLogSubscriptions", true);
+                                        break;
+                                case AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases:
+                                        appsFlyerAndroidConnector.CallStatic("setAutoLogInApps", true);
+                                        break;
+                                default:
+                                        break;
+                        }
+                }
 #else
 #endif
         }
@@ -78,11 +111,13 @@ namespace AppsFlyerConnector
 #endif
         }
 
-        public static void setAutoLogPurchaseRevenue() {
-
-#if UNITY_IOS && !UNITY_EDITOR
-                // delegate implementation
-#endif                
+        private static int mapStoreToInt(Store s) {
+                switch(s) {
+                        case(Store.GOOGLE):
+                                return 0;
+                        default:
+                                return -1;
+                }
         }
 
 #if UNITY_IOS && !UNITY_EDITOR
@@ -96,15 +131,20 @@ namespace AppsFlyerConnector
     [DllImport("__Internal")]
     private static extern void _setPurchaseRevenueDelegate();
     [DllImport("__Internal")]
-    private static extern void _setPurchaseRevenueDataSource();
+    private static extern void _setAutoLogPurchaseRevenue(int option);
     [DllImport("__Internal")]
-    private static extern void _setAutoLogPurchaseRevenue();
-    [DllImport("__Internal")]
-    private static extern void _build();
+    private static extern void _init(string objectName);
 
 #endif
     }
     public enum Store {
-    GOOGLE
-}
+    GOOGLE = 0
+    }
+    public enum AppsFlyerAutoLogPurchaseRevenueOptions
+    {
+        AppsFlyerAutoLogPurchaseRevenueOptionsDisabled = 0,
+        AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions = 1 << 0,
+        AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases = 1 << 1
+    }
+
 }

@@ -2,11 +2,12 @@
 <dependencies>
   
   <androidPackages>
-    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity-beta:6.8.3.3"></androidPackage>
+    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity:1.0.2"></androidPackage>
+    <androidPackage spec="com.appsflyer:purchase-connector:1.0.0"></androidPackage>
   </androidPackages>
 
   <iosPods>
-    <iosPod name="PurchaseConnector" version="6.8.0" minTargetSdk="9.0">
+    <iosPod name="PurchaseConnector" version="6.8.1" minTargetSdk="9.0">
     </iosPod>
   </iosPods>
 
