@@ -88,11 +88,7 @@ public class AppsFlyerAndroidWrapper {
                 @Override
                 public void onFailure(@NonNull String result, @Nullable Throwable error) {
                     if (unityObjectName != null) {
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("result", result);
-                        map.put("errorDescription", error.toString());
-                        JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, result);
                     }
                 }
             });
@@ -113,11 +109,7 @@ public class AppsFlyerAndroidWrapper {
                 @Override
                 public void onFailure(@NonNull String result, @Nullable Throwable error) {
                     if (unityObjectName != null) {
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("result", result);
-                        map.put("errorDescription", error.toString());
-                        JSONObject jsonObject = new JSONObject(map);
-                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, jsonObject.toString());
+                        UnityPlayer.UnitySendMessage(unityObjectName, ERROR_CALLBACK, result);
                     }
                 }
             });
