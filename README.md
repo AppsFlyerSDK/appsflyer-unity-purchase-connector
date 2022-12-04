@@ -53,9 +53,7 @@
    AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
 // Purchase connector implementation 
-#if UNITY_ANDROID
     AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
-#endif
     AppsFlyerPurchaseConnector.setIsSandbox(true);
     AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
     AppsFlyerPurchaseConnector.build();
@@ -138,9 +136,7 @@ void Start()
     { 
         AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
         AppsFlyer.setIsDebug(isDebug);
-    #if UNITY_ANDROID
         AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
-    #endif
         AppsFlyerPurchaseConnector.setIsSandbox(true);
         AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
         AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
