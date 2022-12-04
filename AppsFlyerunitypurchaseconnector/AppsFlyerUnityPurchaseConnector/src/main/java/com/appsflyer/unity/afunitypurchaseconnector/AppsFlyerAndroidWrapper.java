@@ -35,6 +35,7 @@ public class AppsFlyerAndroidWrapper {
     private static String unityCallbackResult;
 
     public static void build(Store store, String objectName, boolean isSandbox, boolean logSubscriptions, boolean autoLogInApps, boolean enableSubscriptionPurchaseEventDataSource, boolean enableInAppPurchaseEventDataSource, boolean enableSubValidationCallback, boolean enableInAppValidationCallback) {
+        Log.d("PurchaseConnector", "build");
         unityObjectName = objectName;
         purchaseClientInstance = new PurchaseClient.Builder(UnityPlayer.currentActivity, store)
                 .logSubscriptions(logSubscriptions)
@@ -55,7 +56,7 @@ public class AppsFlyerAndroidWrapper {
                             }
 
                             String str = unitySendMessageExtended(unityObjectName, SUBSCRIPTION_DATA_CALLBACK, jsonObject.toString());
-                            Log.d("AppsFlyer-PurchaseConnector-Unity", str);
+                            Log.d("PurchaseConnector", str);
 
                             String[] pairs = str.split(",");
                             for (String pair : pairs) {
@@ -81,7 +82,7 @@ public class AppsFlyerAndroidWrapper {
                             }
 
                             String str = unitySendMessageExtended(unityObjectName, INAPP_DATA_CALLBACK, jsonObject.toString());
-                            Log.d("AppsFlyer-PurchaseConnector-Unity", str);
+                            Log.d("PurchaseConnectory", str);
 
                             String[] pairs = str.split(",");
                             for (String pair : pairs) {

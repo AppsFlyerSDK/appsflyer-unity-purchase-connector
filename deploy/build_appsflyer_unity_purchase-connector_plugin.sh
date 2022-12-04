@@ -4,7 +4,7 @@ echo "Start build for appsflyer-unity-purchase-connector.unitypackage"
 
 DEPLOY_PATH=output
 UNITY_PATH="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
-PACKAGE_NAME="appsflyer-unity-purchase-connector-6.8.3.unitypackage"
+PACKAGE_NAME="appsflyer-unity-purchase-connector-1.0.0.unitypackage"
 mkdir -p $DEPLOY_PATH
 
 #move external dependency manager
@@ -12,7 +12,7 @@ echo "moving the external dependency manager to root"
 mv external-dependency-manager-1.2.144.unitypackage ..
 
 # Build the .unitypackage
- /Applications/Unity/Hub/Editor/2020.3.15f2/Unity.app/Contents/MacOS/Unity \
+ /Applications/Unity/Hub/Editor/2020.3.41f1/Unity.app/Contents/MacOS/Unity \
 -gvh_disable \
 -batchmode \
 -importPackage external-dependency-manager-1.2.144.unitypackage \
@@ -23,7 +23,7 @@ mv external-dependency-manager-1.2.144.unitypackage ..
 Assets \
 $PWD/$DEPLOY_PATH/$PACKAGE_NAME \
 -quit \
-&& echo "Package exported successfully to output/appsflyer-unity-purchase-connector-6.8.3.unitypackage" \
+&& echo "Package exported successfully to output/appsflyer-unity-purchase-connector-1.0.0.unitypackage" \
 || echo "Failed to export package. See create_unity_core.log for more info"
 
 if [ "$1" == "-p" ]; then
