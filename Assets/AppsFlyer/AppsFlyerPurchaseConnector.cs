@@ -97,20 +97,6 @@ namespace AppsFlyerConnector
 #endif
         }
 
-        public static void setPurchaseRevenueDelegate() {
-
-#if UNITY_IOS && !UNITY_EDITOR
-                // delegate implementation
-#endif
-        }
-
-        public static void setPurchaseRevenueDataSource() {
-
-#if UNITY_IOS && !UNITY_EDITOR
-                // delegate implementation
-#endif
-        }
-
         private static int mapStoreToInt(Store s) {
                 switch(s) {
                         case(Store.GOOGLE):
