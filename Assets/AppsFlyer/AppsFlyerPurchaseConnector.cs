@@ -14,6 +14,15 @@ namespace AppsFlyerConnector
         private static AndroidJavaClass appsFlyerAndroidConnector = new AndroidJavaClass("com.appsflyer.unity.afunitypurchaseconnector.AppsFlyerAndroidWrapper");
 #endif
 
+        public static void init(MonoBehaviour unityObject, Store s) {
+#if UNITY_IOS && !UNITY_EDITOR
+                _init(unityObject.name);
+#elif UNITY_ANDROID && !UNITY_EDITOR
+                int store = mapStoreToInt(s);
+                appsFlyerAndroidConnector.CallStatic("init", unityObject ? unityObject.name : null, store);
+#endif
+        }
+
         public static void build() {
 #if UNITY_IOS && !UNITY_EDITOR
         //not for iOS
@@ -24,14 +33,6 @@ namespace AppsFlyerConnector
 #endif
         }
 
-        public static void init(MonoBehaviour unityObject, Store s) {
-#if UNITY_IOS && !UNITY_EDITOR
-                _init(unityObject.name);
-#elif UNITY_ANDROID && !UNITY_EDITOR
-                int store = mapStoreToInt(s);
-                appsFlyerAndroidConnector.CallStatic("init", unityObject ? unityObject.name : null, store);
-#endif
-        }
         public static void startObservingTransactions() {
 #if UNITY_IOS && !UNITY_EDITOR
                 _startObservingTransactions();
