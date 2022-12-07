@@ -87,7 +87,6 @@ public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
 
 ```
 
--
 
 ### <a id="start"> Start Observing Transactions
 
@@ -106,11 +105,14 @@ To stop observing transactions, you need to call `stopObservingTransactions`.
     AppsFlyerPurchaseConnector.stopObservingTransactions();
 ```
 
-> *Note: if you called `stopObservingTransactions` API, you should set `autoLogPurchaseRevenue` value before you call `startObservingTransactions` next time.*
+> *Note: if you called `stopObservingTransactions` API, you should set `autoLogPurchaseRevenue` value before you call `startObservingTransactions` next time.* 
+
+> *Note: The Purchase Connector for Unity currently does not support adding Custom Parameters to purchase events*
 
 ## <a id="testing"> Testing the implementation in Sandbox
-
-In order to test purchases in Xcode environment on a real device with TestFlight sandbox account, you need to set `isSandbox` to true.
+To set the sandbox environnment, you need to set `isSandbox` to true. </br>
+For iOS, it will allow you to test in Xcode environment on a real device with TestFlight sandbox account. </br>
+And for Android, it should be used while testing your [Google Play Billing Library integration](https://developer.android.com/google/play/billing/test). 
 
 ```c#
     AppsFlyerPurchaseConnector.setIsSandbox(true);

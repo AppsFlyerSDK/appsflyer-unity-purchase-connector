@@ -2,7 +2,7 @@
 <dependencies>
   
   <androidPackages>
-    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity:1.0.2"></androidPackage>
+    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity:1.0.3"></androidPackage>
     <androidPackage spec="com.appsflyer:purchase-connector:1.0.0"></androidPackage>
   </androidPackages>
 

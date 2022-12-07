@@ -32,15 +32,6 @@ public class AppsFlyerAndroidWrapper {
     private static PurchaseClient.Builder builder;
 
     private static String unityObjectName;
-    // private static String unityCallbackResult;
-
-    public static void build() {
-        if (builder != null) {
-            purchaseClientInstance = builder.build();
-        } else {
-            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Initialization is required prior to building.");
-        }
-    }
 
     public static void init(String objectName, int store) {
         unityObjectName = objectName;
@@ -51,6 +42,16 @@ public class AppsFlyerAndroidWrapper {
             Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Please choose a valid store.");
         }
     }
+
+
+    public static void build() {
+        if (builder != null) {
+            purchaseClientInstance = builder.build();
+        } else {
+            Log.w("AppsFlyer_Connector", "[PurchaseConnector]: Initialization is required prior to building.");
+        }
+    }
+
 
     public static void setIsSandbox(boolean isSandbox) {
         if (builder != null) {
@@ -133,30 +134,12 @@ public class AppsFlyerAndroidWrapper {
         }
     }
 
-    // public static void setUnityObjectName(String objectName) {
-    //     unityObjectName = objectName;
-    // }
-
-//     public static String unitySendMessageExtended(String gameObject, String functionName, String funcParam) {
-//         UnityPlayer.UnitySendMessage(gameObject, functionName, funcParam);
-//         String result = unityCallbackResult;
-//         return result;
-//     }
-
-//     public static void receiveResult(String str) {
-// //        unityCallbackResult = "";
-//         unityCallbackResult = str;
-//     }
-
     private static Store mappingEnum(int storeEnum) {
-        Store s;
         switch(storeEnum) {
             case 0:
-                s = Store.GOOGLE;
-                break;
+                return  Store.GOOGLE;
             default:
                return null;
         }
-        return s;
     }
 }
