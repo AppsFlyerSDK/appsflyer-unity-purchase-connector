@@ -28,7 +28,7 @@
 - iOS version 9 and higher.
 - unity appsflyer plugin **6.8.1** and higher.
 - Unity version **2020.3** and higher
-- Google Billing Play version **4.0** and higher
+- Google Billing Play version **4.x.x**
 
 ## <a id="install-connector">  Adding The Connector To Your Project:
 
