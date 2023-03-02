@@ -14,6 +14,7 @@
 ## Table Of Content
   * [This Plugin is Built for](#plugin-build-for)
   * [Adding The Connector To Your Project](#install-connector)
+  * [ProGuard Rules](#proguard-rules)
   * [Basic Integration Of The Connector](#basic-integration)
     + [Set up Purchase Connector](#create-instance)
     + [Log Auto-Renewable Subscriptions and In-App Purchases](#log-subscriptions)
@@ -39,6 +40,14 @@
 
 **Note:** You must have the [AppsFlyer Unity plugin](https://github.com/AppsFlyerSDK/appsflyer-unity-plugin) already in your project. In addition, make sure to init AppsFlyer SDK before Purchase Connector.
 
+## <a id="proguard-rules"> ProGuard Rules
+Android Only - If you are using ProGuard, add the following keep rules to your `proguard-rules.pro` file:
+
+```groovy
+-keep class com.appsflyer.** { *; }
+-keep class kotlin.jvm.internal.Intrinsics{ *; }
+-keep class kotlin.collections.**{ *; }
+```
 
 ## <a id="basic-integration"> Basic Integration Of The Connector
 > *Note: before the implementation of the Purchase connector, please make sure to set up AppsFlyer `appId` and `devKey`*
