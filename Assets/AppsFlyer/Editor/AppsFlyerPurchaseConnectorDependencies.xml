@@ -7,7 +7,7 @@
   </androidPackages>
 
   <iosPods>
-    <iosPod name="PurchaseConnector" version="6.8.1" minTargetSdk="9.0">
+    <iosPod name="PurchaseConnector" version="6.10.1" minTargetSdk="9.0">
     </iosPod>
   </iosPods>
 

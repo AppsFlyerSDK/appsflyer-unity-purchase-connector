@@ -27,9 +27,11 @@
 
 ## <a id="plugin-build-for"> This Module is Built for
 - iOS version 9 and higher.
-- unity appsflyer plugin **6.8.1** and higher.
-- Unity version **2020.3** and higher
-- Google Billing Play version **4.x.x**
+- Unity AppsFlyer plugin **6.10.1** and higher.
+- Unity version **2020.3** and higher.
+- Google Billing Play version **4.x.x**.
+
+To use the module with earlier Unity AppsFlyer plugin versions, check the previous versions of this module, for instance, **v1.0.0** supports versions **6.8.1** and higher.
 
 ## <a id="install-connector">  Adding The Connector To Your Project:
 
