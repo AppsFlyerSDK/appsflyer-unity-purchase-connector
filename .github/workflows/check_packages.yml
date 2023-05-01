@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: checkout repo
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
         
       - name: Name of the branch
         run: | 
