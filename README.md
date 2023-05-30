@@ -56,6 +56,11 @@ Android Only - If you are using ProGuard, add the following keep rules to your `
 
 ### <a id="create-instance"> Set up Purchase Connector
  
+ > Notes: 
+ * The **AppsFlyerPurchaseConnector.init** api initialized the connector for both iOS and Android. However, the store parameter is only for Android stores. 
+ * You only need to call the API **AppsFlyerPurchaseConnector.init** once with the android store as parameter and it will work for both platforms. 
+ * For now, the only Android store available is Google. 
+
 ```c#
     using AppsFlyerSDK;
     using AppsFlyerConnector;
