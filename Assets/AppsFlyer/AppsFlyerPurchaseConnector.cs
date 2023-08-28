@@ -8,7 +8,7 @@ namespace AppsFlyerConnector
     
     public class AppsFlyerPurchaseConnector : MonoBehaviour {
 
-        public static readonly string kAppsFlyerPurchaseConnectorVersion = "1.0.1";
+        public static readonly string kAppsFlyerPurchaseConnectorVersion = "2.0.0";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         private static AndroidJavaClass appsFlyerAndroidConnector = new AndroidJavaClass("com.appsflyer.unity.afunitypurchaseconnector.AppsFlyerAndroidWrapper");
