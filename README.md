@@ -27,9 +27,9 @@
 
 ## <a id="plugin-build-for"> This Module is Built for
 - iOS version 9 and higher.
-- Unity AppsFlyer plugin **6.10.1** and higher.
+- Unity AppsFlyer plugin **6.12.2** and higher.
 - Unity version **2020.3** and higher.
-- Google Billing Play version **4.x.x**.
+- Google Billing Play version **5.x.x**.
 
 To use the module with earlier Unity AppsFlyer plugin versions, check the previous versions of this module, for instance, **v1.0.0** supports versions **6.8.1** and higher.
 
@@ -99,8 +99,20 @@ AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
 public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
 {
     AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
-}
+    // deserialize the string as a dictionnary, easy to manipulate
+    Dictionary<string, object> dictionary = AFMiniJSON.Json.Deserialize(validationInfo) as Dictionary<string, object>;
 
+    // if the platform is Android, you can create an object from the dictionnary 
+#if UNITY_ANDROID
+    if (dictionary.ContainsKey("productPurchase") && dictionary["productPurchase"] != null)
+    {
+            // Create an object from the JSON string.
+            InAppPurchaseValidationResult iapObject = JsonUtility.FromJson<InAppPurchaseValidationResult>(validationInfo);
+    } elif (dictionary.ContainsKey("subscriptionPurchase") && dictionary["subscriptionPurchase"] != null) {
+            SubscriptionValidationResult iapObject = JsonUtility.FromJson<SubscriptionValidationResult>(validationInfo);
+    #endif
+
+}
 ```
 
 
