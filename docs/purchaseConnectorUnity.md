@@ -73,7 +73,7 @@ AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRev
 
 ### Get purchase validation callback
 
-- In order to receive purchase validation event callbacks, you should conform to the purchase validation listenner and implement the callback
+- In order to receive purchase validation event callbacks, you should conform to the purchase validation listener and implement the callback
 
 ```c#
 AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
