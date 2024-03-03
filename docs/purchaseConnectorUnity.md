@@ -33,6 +33,9 @@ To use the module with earlier Unity AppsFlyer plugin versions, check the previo
 -keep class kotlin.jvm.internal.Intrinsics{ *; }
 -keep class kotlin.collections.**{ *; }
 ```
+## Strict Mode
+The module supports a Strict Mode which completely removes the IDFA collection functionality and AdSupport framework dependencies. Use the Strict Mode when developing apps for kids, for example.
+Make sure to use strict mode module with AppsFlyer Unity strict mode plugin.
 
 ## Basic Integration
 
