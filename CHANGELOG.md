@@ -2,6 +2,7 @@
 
 ## v2.0.1
 * Update iOS PurchaseConnector to 6.13.0
+* Add Strict Mode support - iOS
 * Update Android PurchaseConnector to 2.0.1
 
 ## v2.0.0
