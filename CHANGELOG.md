@@ -1,4 +1,7 @@
 # Versions
+## v2.0.3
+* Update iOS PurchaseConnector to 6.15.2
+
 ## v2.0.2
 * Update iOS PurchaseConnector to 6.14.3
 
