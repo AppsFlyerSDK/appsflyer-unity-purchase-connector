@@ -1,4 +1,7 @@
 # Versions
+## v2.0.4
+* Fix 'missing AFUnityUtils.mm' when install UnitySDK by Unity Package Manager
+
 ## v2.0.3
 * Update iOS PurchaseConnector to 6.15.2
 

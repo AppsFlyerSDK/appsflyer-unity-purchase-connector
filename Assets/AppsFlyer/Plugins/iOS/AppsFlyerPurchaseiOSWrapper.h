@@ -2,7 +2,11 @@
 //  Unity-iPhone
 
 
+#if __has_include("AFUnityUtils.mm")
 #import "AFUnityUtils.mm"
+#else
+#import "../../../appsflyer-unity-plugin/Plugins/iOS/AFUnityUtils.mm"
+#endif
 #import "UnityAppController.h"
 #if __has_include(<PurchaseConnector/PurchaseConnector.h>)
 #import  <PurchaseConnector/PurchaseConnector.h>
