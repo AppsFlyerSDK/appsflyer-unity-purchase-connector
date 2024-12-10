@@ -1,4 +1,7 @@
 # Versions
+## v2.1.0
+* Update Android PurchaseConnector to 2.1.0
+
 ## v2.0.4
 * Fix 'missing AFUnityUtils.mm' when install UnitySDK by Unity Package Manager
 

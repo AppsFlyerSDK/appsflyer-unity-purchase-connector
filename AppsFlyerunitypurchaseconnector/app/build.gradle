@@ -4,7 +4,7 @@ plugins {
 
 android {
     compileSdkVersion 32
-
+    namespace "com.appsflyer.appsflyerunitypurchaseconnector"
     defaultConfig {
         applicationId "com.appsflyer.appsflyerunitypurchaseconnector"
         minSdkVersion 19

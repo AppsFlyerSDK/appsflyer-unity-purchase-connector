@@ -2,8 +2,8 @@
 <dependencies>
   
   <androidPackages>
-    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity:2.0.1"></androidPackage>
-    <androidPackage spec="com.appsflyer:purchase-connector:2.0.1"></androidPackage>
+    <androidPackage spec="com.appsflyer:af-purchaseconnector-unity:2.1.0"></androidPackage>
+    <androidPackage spec="com.appsflyer:purchase-connector:2.1.0"></androidPackage>
   </androidPackages>
 
   <iosPods>

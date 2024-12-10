@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 32
+    namespace "com.appsflyer.appsflyerunitypurchaseconnector"
 
     defaultConfig {
         minSdkVersion 19
@@ -21,7 +22,7 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.4.0'
-    compileOnly 'com.appsflyer:purchase-connector:2.0.1'
+    compileOnly 'com.appsflyer:purchase-connector:2.1.0'
     compileOnly 'com.android.billingclient:billing:5.2.0'
     testImplementation 'junit:junit:4.12'
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])

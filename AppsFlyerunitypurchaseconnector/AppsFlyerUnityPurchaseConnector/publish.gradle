@@ -15,17 +15,6 @@ def getSnapshotRepositoryUrl() {
             : "https://oss.sonatype.org/content/repositories/snapshots/"
 }
 
-task androidJavadocs(type: Javadoc) {
-    exclude "**/*.orig" // exclude files created by source control
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    failOnError false
-}
-
-task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-    archiveClassifier.set("javadoc")
-    from androidJavadocs.destinationDir
-}
 
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set("sources")
@@ -65,6 +54,15 @@ def configurePom(pom) {
     }
 }
 
+android {
+    publishing {
+        singleVariant("release") {
+            // if you don't want sources/javadoc, remove these lines
+            withJavadocJar()
+        }
+    }
+}
+
 afterEvaluate {
     publishing {
         publications {
@@ -79,7 +77,7 @@ afterEvaluate {
                 // Two artifacts, the `aar` and the sources
                 // artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
                 artifact bundleReleaseAar
-                artifact androidJavadocsJar
+                //artifact androidJavadocsJar
 
                 // Self-explanatory metadata for the most part
                 pom {
