@@ -1,12 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
+    ext {
+        agp_version = '3.6.1'
+        agp_version1 = '8.1.1'
+    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath "com.android.tools.build:gradle:$agp_version1"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
 
 
