@@ -1,4 +1,7 @@
 # Versions
+## v2.1.10
+* Update Android PurchaseConnector to 2.1.1
+
 ## v2.1.1
 * Update iOS PurchaseConnector to 6.15.3
 * Warnings fix
