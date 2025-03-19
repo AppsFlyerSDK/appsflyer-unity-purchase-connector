@@ -22,7 +22,7 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.4.0'
-    compileOnly 'com.appsflyer:purchase-connector:2.1.0'
+    compileOnly 'com.appsflyer:purchase-connector:2.1.1'
     compileOnly 'com.android.billingclient:billing:5.2.0'
     testImplementation 'junit:junit:4.12'
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
