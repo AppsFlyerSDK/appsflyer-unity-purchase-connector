@@ -9,7 +9,7 @@ hidden: false
 ## Prerequisites
 
 - iOS version 9 and higher.
-- Unity AppsFlyer plugin **6.12.2** and higher.
+- Unity AppsFlyer plugin **6.15.3**.
 - Unity version **2020.3** and higher.
 - Google Billing Play version **5.x.x** and **6.x.x**
 
