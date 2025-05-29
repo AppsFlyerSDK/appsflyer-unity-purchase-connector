@@ -60,6 +60,7 @@ Make sure to use strict mode module with AppsFlyer Unity strict mode plugin.
     AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
     AppsFlyerPurchaseConnector.setIsSandbox(true);
     AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+    AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
     AppsFlyerPurchaseConnector.build();
 
 ```
@@ -76,7 +77,7 @@ AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRev
 
 ### Get purchase validation callback
 
-- In order to receive purchase validation event callbacks, you should conform to the purchase validation listener and implement the callback
+- In order to receive purchase validation event callbacks, you should conform to the purchase validation listener and implement both callbacks
 
 ```c#
 AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
@@ -94,10 +95,152 @@ public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
     {
             // Create an object from the JSON string.
             InAppPurchaseValidationResult iapObject = JsonUtility.FromJson<InAppPurchaseValidationResult>(validationInfo);
-    } elif (dictionary.ContainsKey("subscriptionPurchase") && dictionary["subscriptionPurchase"] != null) {
+    } 
+    else if (dictionary.ContainsKey("subscriptionPurchase") && dictionary["subscriptionPurchase"] != null) 
+    {
             SubscriptionValidationResult iapObject = JsonUtility.FromJson<SubscriptionValidationResult>(validationInfo);
-    #endif
+    }
+#endif
+}
 
+public void didReceivePurchaseRevenueError(string error)
+{
+    AppsFlyer.AFLog("didReceivePurchaseRevenueError", error);
+    // Handle validation error
+    Debug.LogError("Purchase validation failed: " + error);
+}
+```
+
+#### Error Data Structure
+
+The `didReceivePurchaseRevenueError` callback receives simple string messages on both platforms:
+
+**Android Error Structure:**
+On Android, the error callback receives simple string messages for network/connection failures:
+```
+"Connection timeout"
+```
+
+**iOS Error Structure:**
+On iOS, the error callback receives the localized error description string:
+```
+"The purchase could not be validated"
+```
+
+**Important Note:**
+Detailed validation failure information (like invalid purchase tokens) is sent to the **success callback** (`didReceivePurchaseRevenueValidationInfo`) with `success: false`, not to the error callback. The error callback is primarily for network/connection issues.
+
+**Validation Failure Example (sent to success callback):**
+```json
+{
+  "success": false,
+  "failureData": {
+    "status": "INVALID_PURCHASE", 
+    "description": "Purchase token is invalid or expired"
+  }
+}
+```
+
+**Common Error Callback Scenarios:**
+- **Network Issues**: Connection timeout or server unavailable
+- **Configuration Issues**: Incorrect initialization or setup problems
+
+#### Validation Data Structure
+
+The `didReceivePurchaseRevenueValidationInfo` callback receives JSON strings with different structures based on platform and purchase type:
+
+**Android - In-App Purchase Success:**
+```json
+{
+  "token": "purchase_token_here",
+  "success": "true",
+  "productPurchase": {
+    "productId": "com.example.product",
+    "purchaseState": 1,
+    "kind": "androidpublisher#productPurchase",
+    "purchaseTimeMillis": "1640995200000",
+    "consumptionState": 0,
+    "orderId": "GPA.1234-5678-9012-34567",
+    "purchaseType": 0,
+    "acknowledgementState": 1,
+    "purchaseToken": "token_here",
+    "quantity": 1,
+    "regionCode": "US"
+  }
+}
+```
+
+**Android - Subscription Success:**
+```json
+{
+  "productId": "com.example.subscription",
+  "success": "true",
+  "subscriptionPurchase": {
+    "acknowledgementState": 1,
+    "kind": "androidpublisher#subscriptionPurchase",
+    "latestOrderId": "GPA.1234-5678-9012-34567",
+    "regionCode": "US",
+    "subscriptionState": 1,
+    "startTime": "1640995200000",
+    "lineItems": [
+      {
+        "productId": "com.example.subscription",
+        "expiryTime": "1643673600000",
+        "autoRenewingPlan": {
+          "autoRenewEnabled": "true"
+        },
+        "offerDetails": {
+          "basePlanId": "base-plan",
+          "offerId": "offer-id"
+        }
+      }
+    ]
+  }
+}
+```
+
+**Android - Validation Failure:**
+```json
+{
+  "success": "false",
+  "failureData": {
+    "status": "INVALID_PURCHASE",
+    "description": "Purchase token is invalid or expired"
+  }
+}
+```
+
+**iOS - Validation Success:**
+iOS validation data follows the native AppsFlyer iOS SDK format:
+```json
+{
+  "receipt-data": "base64_encoded_receipt",
+  "price": "1.99",
+  "currency": "USD",
+  "transaction_id": "1000000123456789",
+  "product_id": "com.example.product"
+}
+```
+
+#### Important Notes
+
+**Callback Behavior:**
+- **Mutually Exclusive**: Only one callback will be triggered per validation attempt - either `didReceivePurchaseRevenueValidationInfo` (success/detailed failure) or `didReceivePurchaseRevenueError` (network/connection issues).
+- **Success Callback**: `didReceivePurchaseRevenueValidationInfo` is called for both successful validations AND detailed validation failures (with `success: false`).
+- **Error Callback**: `didReceivePurchaseRevenueError` is called only for network issues, connection problems, or configuration errors.
+
+**When Each Callback is Triggered:**
+- **Success Callback** → Purchase validated successfully OR validation failed with detailed error info
+- **Error Callback** → Network timeout, connection issues, or SDK configuration problems
+
+**Interface Implementation Required:**
+Your MonoBehaviour class must implement the `IAppsFlyerPurchaseValidation` interface to receive these callbacks:
+```c#
+public class YourScript : MonoBehaviour, IAppsFlyerPurchaseValidation
+{
+    // Both methods are required
+    public void didReceivePurchaseRevenueValidationInfo(string validationInfo) { }
+    public void didReceivePurchaseRevenueError(string error) { }
 }
 ```
 
@@ -157,9 +300,16 @@ void Start()
         AppsFlyer.startSDK();
     }
 
-  public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
+    public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
     {
         AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
     }
 
+    public void didReceivePurchaseRevenueError(string error)
+    {
+        AppsFlyer.AFLog("didReceivePurchaseRevenueError", error);
+        Debug.LogError("Purchase validation failed: " + error);
+    }
+}
 ```
+
